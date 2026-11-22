@@ -1,7 +1,27 @@
+import { useEffect } from "react";
 import { CalendarClock, Leaf, WifiOff } from "lucide-react";
 import { hinglish } from "./i18n/hinglish";
 
+let seedImportStarted = false;
+
 export function App() {
+  useEffect(() => {
+    if (!import.meta.env.DEV || new URLSearchParams(window.location.search).get("seed") !== "1") {
+      return;
+    }
+    if (seedImportStarted) {
+      return;
+    }
+    seedImportStarted = true;
+
+    void import("./db/seed")
+      .then(({ seedDemoData }) => seedDemoData())
+      .catch((error: unknown) => {
+        seedImportStarted = false;
+        console.error("Could not seed the development database.", error);
+      });
+  }, []);
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 py-8 sm:justify-center sm:px-8">
       <header className="mb-12 flex items-center gap-3">

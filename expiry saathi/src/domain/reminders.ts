@@ -1,6 +1,6 @@
 import { startOfDay } from "date-fns";
 import { getStatus } from "./expiry";
-import type { Batch, Category, ReminderLogEntry } from "./types";
+import type { BatchWithProduct, Category, ReminderLogEntry } from "./types";
 
 export const EXPIRY_REMINDER_KIND = "expiry" as const;
 
@@ -16,21 +16,21 @@ const isSameLocalDay = (first: Date, second: Date): boolean => {
 };
 
 export function getDueReminders(
-  batches: readonly Batch[],
+  batches: readonly BatchWithProduct[],
   categories: readonly Category[],
   today: Date,
   reminderLog: readonly ReminderLogEntry[],
-): Batch[] {
-  const categoriesById = new Map(categories.map((category) => [category.id, category]));
-
+): BatchWithProduct[] {
   return batches.filter((batch) => {
     if (batch.status !== "active" || batch.deletedAt) {
       return false;
     }
 
-    const category = categoriesById.get(batch.categoryId);
+    const category = categories.find(
+      (candidate) => candidate.name === batch.category && !candidate.deletedAt,
+    );
     if (!category) {
-      throw new Error(`Missing category "${batch.categoryId}" for batch "${batch.id}"`);
+      throw new Error(`Missing category "${batch.category}" for batch "${batch.id}"`);
     }
 
     const { daysLeft } = getStatus(batch.expiryDate, today);

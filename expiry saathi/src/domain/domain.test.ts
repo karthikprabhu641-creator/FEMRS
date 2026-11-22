@@ -10,11 +10,15 @@ import {
   ExpiryThresholdsSchema,
   ProductSchema,
   ReminderLogEntrySchema,
-  type Batch,
+  type BatchWithProduct,
   type Category,
   type Product,
   type ReminderLogEntry,
 } from "./types";
+
+const productId = "00000000-0000-4000-8000-000000000001";
+const batchId = "00000000-0000-4000-8000-000000000002";
+const categoryId = "00000000-0000-4000-8000-000000000003";
 
 const localDate = (year: number, month: number, day: number, hour = 12, minute = 0): Date =>
   new Date(year, month - 1, day, hour, minute);
@@ -31,11 +35,11 @@ const addDays = (date: Date, count: number): string => {
   return formatLocalDate(result);
 };
 
-const makeBatch = (overrides: Partial<Batch> = {}): Batch => ({
-  id: "batch-1",
-  productId: "product-1",
+const makeBatch = (overrides: Partial<BatchWithProduct> = {}): BatchWithProduct => ({
+  id: batchId,
+  productId,
   name: "Daal",
-  categoryId: "pantry",
+  category: "Pantry",
   expiryDate: "2024-01-04",
   quantity: 5,
   unit: "pack",
@@ -46,17 +50,18 @@ const makeBatch = (overrides: Partial<Batch> = {}): Batch => ({
 });
 
 const makeCategory = (overrides: Partial<Category> = {}): Category => ({
-  id: "pantry",
+  id: categoryId,
   name: "Pantry",
   alertDays: 3,
   icon: "box",
   color: "green",
+  updatedAt: localDate(2023, 1, 1),
   ...overrides,
 });
 
 const makeReminder = (overrides: Partial<ReminderLogEntry> = {}): ReminderLogEntry => ({
-  id: "reminder-1",
-  batchId: "batch-1",
+  id: "00000000-0000-4000-8000-000000000004",
+  batchId,
   kind: EXPIRY_REMINDER_KIND,
   firedAt: localDate(2024, 1, 1, 8),
   ...overrides,
@@ -87,15 +92,15 @@ describe("domain schemas", () => {
   it("infers and validates product, batch, category, and reminder data", () => {
     const now = localDate(2024, 1, 1);
     const product: Product = {
-      id: "product-1",
+      id: productId,
       name: "Daal",
-      categoryId: "pantry",
+      category: "Pantry",
       defaultUnit: "pack",
       createdAt: now,
       updatedAt: now,
     };
     const batch = makeBatch();
-    const category = makeCategory({ thresholds: { criticalDays: 5 } });
+    const category = makeCategory();
     const reminder = makeReminder();
 
     expect(ProductSchema.safeParse(product).success).toBe(true);
@@ -150,8 +155,8 @@ describe("getStatus", () => {
       status: "warning",
       daysLeft: 4,
     });
-    const category = makeCategory({ thresholds: { criticalDays: 5 } });
-    expect(getStatus("2024-01-05", today, category.thresholds)).toEqual({
+    const categoryThresholds = { criticalDays: 5 };
+    expect(getStatus("2024-01-05", today, categoryThresholds)).toEqual({
       status: "critical",
       daysLeft: 4,
     });
@@ -219,6 +224,12 @@ describe("sortByExpiry", () => {
     ];
 
     expect(sortByExpiry(batches).map(({ id }) => id)).toEqual(["active"]);
+    expect(sortByExpiry(batches, { includeInactive: true }).map(({ id }) => id)).toEqual([
+      "sold",
+      "discarded",
+      "returned",
+      "active",
+    ]);
   });
 });
 
@@ -245,25 +256,33 @@ describe("getDueReminders", () => {
 
   it("uses the batch category alert threshold and rejects an unknown category", () => {
     const batches = [
-      makeBatch({ id: "pantry", expiryDate: "2024-01-04", categoryId: "pantry" }),
-      makeBatch({ id: "dairy", expiryDate: "2024-01-04", categoryId: "dairy" }),
+      makeBatch({ id: "pantry", expiryDate: "2024-01-04", category: "Pantry" }),
+      makeBatch({ id: "dairy", expiryDate: "2024-01-04", category: "Dairy" }),
     ];
 
     expect(
       getDueReminders(
         batches,
-        [category, makeCategory({ id: "dairy", alertDays: 2 })],
+        [category, makeCategory({ id: "dairy", name: "Dairy", alertDays: 2 })],
         today,
         [],
       ).map(({ id }) => id),
     ).toEqual(["pantry"]);
     expect(() => getDueReminders([batches[0]!], [], today, [])).toThrow(
-      'Missing category "pantry" for batch "pantry"',
+      'Missing category "Pantry" for batch "pantry"',
     );
+    expect(() =>
+      getDueReminders(
+        [batches[0]!],
+        [makeCategory({ deletedAt: localDate(2023, 12, 31) })],
+        today,
+        [],
+      ),
+    ).toThrow('Missing category "Pantry" for batch "pantry"');
   });
 
   it("skips a batch already reminded with the same kind on the local calendar day", () => {
-    const batch = makeBatch({ id: "batch-1", expiryDate: "2024-01-02" });
+    const batch = makeBatch({ id: batchId, expiryDate: "2024-01-02" });
     const reminderLog = [
       makeReminder({ firedAt: localDate(2024, 1, 1, 8) }),
       makeReminder({

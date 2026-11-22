@@ -4,7 +4,7 @@
 
 - [x] **M0 — Project setup:** Vite, React, TypeScript, Tailwind CSS, ESLint, Vitest, PWA plugin, and CI. Done when dev/build/test/lint run cleanly and the app can be installed.
 - [x] **M1 — Domain layer:** expiry status, FIFO sort, reminder rules, and unit tests. Done when domain tests pass, including date-boundary cases; domain logic and schemas have 100% test coverage.
-- [ ] **M2 — Local data:** Dexie schema, repositories, hooks, seed data, and migration test. Done when offline CRUD and tests work.
+- [x] **M2 — Local data:** Dexie schema, repositories, hooks, seed data, and migration test. Done when offline CRUD and tests work; repository, hook, persistence, and test-only migration checks pass.
 - [ ] **M3 — Add item:** quick-add flow with date presets and validation. Done when a batch can be added in under 10 seconds.
 - [ ] **M4 — Dashboard and items:** counts, search, filters, and FIFO sorting. Done when counts match data and empty states are handled.
 - [ ] **M5 — Item actions:** sold/discarded/returned actions, edit, delete with Undo, and event history. Done when events are logged and Undo works.
