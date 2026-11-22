@@ -34,6 +34,7 @@ const BatchUpdateSchema = BatchSchema.omit({
   .refine((input) => Object.keys(input).length > 0, "At least one batch field must be updated");
 
 const BatchIdSchema = z.uuid();
+const QuantityIncrementSchema = z.number().finite().positive();
 
 export interface BatchListFilters {
   status?: BatchStatus;
@@ -122,6 +123,33 @@ export function createBatchesRepository(database: ExpirySaathiDatabase = db) {
           }
 
           const next = BatchSchema.parse({ ...current, ...values, updatedAt: new Date() });
+          await database.batches.put(next);
+          await addEvent(next.id, "edited", next.quantity);
+          return next;
+        },
+      );
+      await requestPersistentStorageAfterFirstSave();
+      return updated;
+    },
+
+    async incrementQuantity(id: string, amount: number): Promise<Batch> {
+      const batchId = BatchIdSchema.parse(id);
+      const increment = QuantityIncrementSchema.parse(amount);
+      const updated = await database.transaction(
+        "rw",
+        database.batches,
+        database.events,
+        async () => {
+          const current = await getBatchById(batchId);
+          if (!current || current.status !== "active") {
+            throw new Error(`Active batch "${batchId}" was not found.`);
+          }
+
+          const next = BatchSchema.parse({
+            ...current,
+            quantity: current.quantity + increment,
+            updatedAt: new Date(),
+          });
           await database.batches.put(next);
           await addEvent(next.id, "edited", next.quantity);
           return next;
@@ -277,6 +305,7 @@ const batchesRepository = createBatchesRepository();
 
 export const createBatch = batchesRepository.create;
 export const updateBatch = batchesRepository.update;
+export const incrementBatchQuantity = batchesRepository.incrementQuantity;
 export const getBatchById = batchesRepository.getById;
 export const listBatches = batchesRepository.list;
 export const listBatchesWithProduct = batchesRepository.listWithProduct;
