@@ -37,5 +37,17 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     clearMocks: true,
+    coverage: {
+      provider: "v8",
+      include: ["src/domain/**/*.ts"],
+      exclude: ["src/domain/**/*.test.ts"],
+      reportsDirectory: "coverage/domain",
+      thresholds: {
+        branches: 100,
+        functions: 100,
+        lines: 100,
+        statements: 100,
+      },
+    },
   },
 });
