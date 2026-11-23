@@ -11,5 +11,6 @@
 - **M3 remembered inputs:** Store the last selected category and unit in localStorage. These are form conveniences, not shop data, so this avoids a database schema change and works offline.
 - **M3 translations:** Keep Hinglish as the default dictionary and merge it over English fallback strings through `src/i18n/index.ts`; user-visible copy remains outside components.
 - **M4 dashboard and items:** Dashboard and items consume Dexie live hooks only; status classification remains in `domain/expiry.ts`, FIFO ordering remains in `domain/fifo.ts`, and URL search parameters preserve items filters across refresh/back navigation. No list virtualization dependency is added; list `content-visibility` remains sufficient for the initial data scale.
+- **M5 item actions:** Status transitions and edits use existing transactional batch repositories, with `events` written in the same Dexie transaction. Delete is soft-delete plus an 8-second Undo/restore window; active-only item actions are hidden after a status transition.
 - **Offline deep links:** Register the precached `index.html` as the Workbox navigation fallback so routes such as `/add` reopen after an offline reload.
 - **M3 bundle budget:** Lazy-load the add-item route so the Home placeholder does not eagerly download form and IndexedDB feature code.

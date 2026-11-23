@@ -1,5 +1,33 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test("M5 item edit, sold action, history, delete, and undo", async ({ page, context }) => {
+  await page.goto("/?seed=1");
+  await expect(page.getByRole("link", { name: /Expired:/ })).toBeVisible();
+  await page.goto("/items");
+  await page.getByRole("link").filter({ hasText: "Parle-G Biscuits 100g" }).click();
+  await expect(page.getByRole("heading", { name: "Parle-G Biscuits 100g" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Edit" }).click();
+  const quantity = page.getByLabel("Quantity");
+  await quantity.fill("25");
+  await page.getByRole("button", { name: "Save" }).click();
+
+  await page.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByText("Item delete ho gaya")).toBeVisible();
+  await page.getByRole("button", { name: "Undo" }).click();
+
+  await page.getByRole("button", { name: "Bech diya" }).click();
+  await page.getByRole("button", { name: "Confirm karein" }).click();
+  await expect(page.getByText("Sold").last()).toBeVisible();
+
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Parle-G Biscuits 100g" })).toBeVisible();
+});
+
 test("M4 dashboard, filtered items, live add, and offline reload", async ({ page, context }) => {
   await page.goto("/?seed=1");
   await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();

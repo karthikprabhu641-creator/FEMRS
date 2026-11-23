@@ -7,7 +7,7 @@
 - [x] **M2 — Local data:** Dexie schema, repositories, hooks, seed data, and migration test. Done when offline CRUD and tests work; repository, hook, persistence, and test-only migration checks pass.
 - [x] **M3 — Add item:** quick-add flow with date presets and validation. Done when a batch can be added in under 10 seconds.
 - [x] **M4 — Dashboard and items:** counts, search, filters, and FIFO sorting. Done when counts match data and empty states are handled.
-- [ ] **M5 — Item actions:** sold/discarded/returned actions, edit, delete with Undo, and event history. Done when events are logged and Undo works.
+- [x] **M5 — Item actions:** sold/discarded/returned actions, edit, delete with Undo, and event history. Done when events are logged and Undo works.
 - [ ] **M6 — Settings:** categories, thresholds, language, and dark mode. Done when changes affect statuses live.
 - [ ] **M7 — Reminders:** in-app, local notification, and periodic-sync adapter. Done when due items are notified without duplicates.
 - [ ] **M8 — Backup and install:** JSON/CSV/share, install prompt, update flow, and persistent storage. Done when a backup restores in a fresh browser.
