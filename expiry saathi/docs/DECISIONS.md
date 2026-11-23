@@ -10,5 +10,6 @@
 - **M3 quick add:** Use React Hook Form with the Zod resolver for the quick-add form; both are pinned and remain within the requested small-dependency budget. The user's approved Playwright 1.65.1 test runner is development-only; e2e uses the installed Chrome browser and does not add a browser binary to the app.
 - **M3 remembered inputs:** Store the last selected category and unit in localStorage. These are form conveniences, not shop data, so this avoids a database schema change and works offline.
 - **M3 translations:** Keep Hinglish as the default dictionary and merge it over English fallback strings through `src/i18n/index.ts`; user-visible copy remains outside components.
+- **M4 dashboard and items:** Dashboard and items consume Dexie live hooks only; status classification remains in `domain/expiry.ts`, FIFO ordering remains in `domain/fifo.ts`, and URL search parameters preserve items filters across refresh/back navigation. No list virtualization dependency is added; list `content-visibility` remains sufficient for the initial data scale.
 - **Offline deep links:** Register the precached `index.html` as the Workbox navigation fallback so routes such as `/add` reopen after an offline reload.
 - **M3 bundle budget:** Lazy-load the add-item route so the Home placeholder does not eagerly download form and IndexedDB feature code.

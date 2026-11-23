@@ -1,5 +1,32 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test("M4 dashboard, filtered items, live add, and offline reload", async ({ page, context }) => {
+  await page.goto("/?seed=1");
+  await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Expired:/ })).toBeVisible();
+
+  await page.getByRole("link", { name: /Expired:/ }).click();
+  await expect(page).toHaveURL(/status=expired/);
+  await expect(page.getByText(/items$/).first()).toBeVisible();
+
+  await page.goto("/add");
+  await page.getByLabel("Product").fill("Offline live tea");
+  await page.getByRole("option", { name: "Naya item banao: Offline live tea" }).click();
+  await page.getByRole("button", { name: "Aaj se 7 din" }).click();
+  await page.getByRole("button", { name: "Batch save karein" }).click();
+  await expect(page.getByRole("status")).toContainText("Batch save ho gaya");
+
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
+
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
+});
+
 test("quick add saves a batch and keeps it after an offline reload", async ({ page, context }) => {
   await page.goto("/add");
   await page.getByLabel("Product").fill("Offline e2e tea");

@@ -10,6 +10,9 @@ export function getMessages(locale: Locale = defaultLocale) {
   return {
     ...en,
     ...selected,
+    dashboard: { ...en.dashboard, ...selected.dashboard },
+    itemList: { ...en.itemList, ...selected.itemList },
+    itemDetail: { ...en.itemDetail, ...selected.itemDetail },
     status: { ...en.status, ...selected.status },
     validation: { ...en.validation, ...selected.validation },
   };

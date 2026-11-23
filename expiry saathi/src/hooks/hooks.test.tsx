@@ -159,7 +159,7 @@ describe("database hooks", () => {
     await waitFor(() => expect(result.current).toHaveLength(1));
     expect(result.current?.[0]).toMatchObject({ key: "theme", value: "dark" });
 
-    await settings.set({ key: "language", value: "hinglish" });
+    await settings.set({ key: "language", value: "en" });
     await waitFor(() => expect(result.current).toHaveLength(2));
   });
 });

@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle2, Clock3, XCircle } from "lucide-react";
 import type { ExpiryResult, ExpiryStatus } from "../domain/expiry";
-import { defaultMessages as hinglish } from "../i18n";
+import { defaultMessages as messages } from "../i18n";
 
 const statusClassNames: Record<ExpiryStatus, string> = {
   expired: "bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-100",
@@ -41,19 +41,19 @@ export function StatusBadge({ result }: StatusBadgeProps) {
 
 function getStatusLabel(status: ExpiryStatus, daysLeft: number): string {
   if (daysLeft < 0) {
-    return hinglish.status.expired;
+    return messages.status.expired;
   }
   if (daysLeft === 0) {
-    return hinglish.status.today;
+    return messages.status.today;
   }
   if (status === "critical") {
-    return hinglish.status.critical(daysLeft);
+    return messages.status.critical(daysLeft);
   }
   if (status === "warning") {
-    return hinglish.status.warning(daysLeft);
+    return messages.status.warning(daysLeft);
   }
   if (status === "soon") {
-    return hinglish.status.soon(daysLeft);
+    return messages.status.soon(daysLeft);
   }
-  return hinglish.status.ok;
+  return messages.status.ok;
 }

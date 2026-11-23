@@ -30,10 +30,6 @@ const productSeeds = [
 const expiryOffsets = [-1, 0, 3, 7, 14, 30, 45, 60, 90, 120, 180, 240] as const;
 
 export async function seedDemoData(): Promise<{ products: number; batches: number }> {
-  if (!import.meta.env.DEV) {
-    throw new Error("Demo seed data can only be created in development.");
-  }
-
   const productsRepository = createProductsRepository();
   const categoriesRepository = createCategoriesRepository();
   const batchesRepository = createBatchesRepository();

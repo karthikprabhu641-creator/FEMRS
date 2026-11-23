@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { CheckCircle2, Undo2, X } from "lucide-react";
 import { Button } from "./Button";
-import { defaultMessages as hinglish } from "../i18n";
+import { defaultMessages as messages } from "../i18n";
 
 export interface ToastProps {
   children: ReactNode;
@@ -30,11 +30,11 @@ export function Toast({ children, onUndo, onDismiss, actions }: ToastProps) {
             variant="quiet"
           >
             <Undo2 aria-hidden="true" size={16} />
-            {hinglish.undo}
+            {messages.undo}
           </Button>
         </div>
         <button
-          aria-label={hinglish.dismiss}
+          aria-label={messages.dismiss}
           className="flex size-10 shrink-0 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           onClick={onDismiss}
           type="button"

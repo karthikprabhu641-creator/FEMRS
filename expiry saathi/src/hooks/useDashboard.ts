@@ -17,10 +17,12 @@ export interface DashboardBucket {
 }
 
 export interface DashboardData {
+  allCount: number;
   expired: DashboardBucket;
   today: DashboardBucket;
   next7Days: DashboardBucket;
   next30Days: DashboardBucket;
+  ok: DashboardBucket;
 }
 
 const makeBucket = (items: DashboardBatch[]): DashboardBucket => ({
@@ -28,7 +30,10 @@ const makeBucket = (items: DashboardBatch[]): DashboardBucket => ({
   items,
 });
 
-export function useDashboard(): DashboardData | undefined {
+export function useDashboard(todayInput?: Date): DashboardData | undefined {
+  const todayKey = todayInput
+    ? `${todayInput.getFullYear()}-${String(todayInput.getMonth() + 1).padStart(2, "0")}-${String(todayInput.getDate()).padStart(2, "0")}`
+    : "live";
   return useLiveQuery(async () => {
     const [batchRows, categories, thresholdsSetting] = await Promise.all([
       listBatchesWithProduct({ status: "active" }),
@@ -39,11 +44,12 @@ export function useDashboard(): DashboardData | undefined {
     const categoriesByName = new Map(categories.map((category) => [category.name, category]));
     const thresholdsByCategory =
       thresholdsSetting?.key === "categoryThresholds" ? thresholdsSetting.value : {};
-    const today = new Date();
+    const today = todayInput ? new Date(todayInput) : new Date();
     const expired: DashboardBatch[] = [];
     const todayItems: DashboardBatch[] = [];
     const next7Days: DashboardBatch[] = [];
     const next30Days: DashboardBatch[] = [];
+    const ok: DashboardBatch[] = [];
 
     for (const batch of batches) {
       const category = categoriesByName.get(batch.category);
@@ -68,14 +74,18 @@ export function useDashboard(): DashboardData | undefined {
         next30Days.push(dashboardBatch);
       } else if (daysLeft <= 30) {
         next30Days.push(dashboardBatch);
+      } else {
+        ok.push(dashboardBatch);
       }
     }
 
     return {
+      allCount: batches.length,
       expired: makeBucket(expired),
       today: makeBucket(todayItems),
       next7Days: makeBucket(next7Days),
       next30Days: makeBucket(next30Days),
+      ok: makeBucket(ok),
     };
-  }, []);
+  }, [todayKey]);
 }

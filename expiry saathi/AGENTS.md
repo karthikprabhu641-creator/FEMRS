@@ -26,7 +26,7 @@ src/features/      one folder per feature: dashboard, add-item, items, item-deta
 src/components/    shared UI (Button, Sheet, StatusBadge, DatePresets, Toast, EmptyState)
 src/notifications/ delivery adapters: inApp, localNotification, periodicSync, webPush
 src/sw/            service worker source
-src/i18n/          en.ts, hinglish.ts, hi.ts (default = hinglish)
+src/i18n/          en.ts, hinglish.ts (Hinglish default, English fallback)
 src/lib/           small utilities (id, csv, share, install-prompt)
 docs/              PRD.md, ROADMAP.md, DECISIONS.md
 
@@ -51,7 +51,7 @@ docs/              PRD.md, ROADMAP.md, DECISIONS.md
 ## UI rules
 - Mobile-first at 360px width, tap targets at least 48px, bottom navigation, thumb-reachable actions.
 - Status is shown with colour + icon + text (never colour alone). High contrast. Dark mode supported.
-- Default copy is Hinglish (example: "Aaj expire ho raha hai"). No hardcoded strings in components.
+- Default copy is Hinglish. English is the fallback. No hardcoded strings in components.
 - Add-item flow must be completable in under 10 seconds (search or scan, quantity, date preset).
 - Respect prefers-reduced-motion. All inputs have labels. Visible focus states.
 

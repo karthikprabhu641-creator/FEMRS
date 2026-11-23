@@ -1,6 +1,6 @@
 import { Minus, Plus } from "lucide-react";
 import { Button } from "./Button";
-import { defaultMessages as hinglish } from "../i18n";
+import { defaultMessages as messages } from "../i18n";
 
 export interface QuantityStepperProps {
   value: number;
@@ -24,11 +24,11 @@ export function QuantityStepper({
   return (
     <div>
       <label className="block text-sm font-semibold" htmlFor={inputId}>
-        {hinglish.quantity}
+        {messages.quantity}
       </label>
       <div className="mt-2 flex min-h-16 items-center gap-2">
         <Button
-          aria-label={hinglish.decreaseQuantity}
+          aria-label={messages.decreaseQuantity}
           className="size-12 shrink-0 p-0"
           disabled={value <= 0}
           onClick={() => onChange(Math.max(0, value - 1))}
@@ -50,7 +50,7 @@ export function QuantityStepper({
           value={Number.isFinite(value) ? value : ""}
         />
         <Button
-          aria-label={hinglish.increaseQuantity}
+          aria-label={messages.increaseQuantity}
           className="size-12 shrink-0 p-0"
           onClick={() => onChange(value + 1)}
           type="button"
@@ -59,7 +59,7 @@ export function QuantityStepper({
           <Plus aria-hidden="true" size={20} />
         </Button>
         <label className="sr-only" htmlFor="batch-unit">
-          {hinglish.unit}
+          {messages.unit}
         </label>
         <select
           className="min-h-12 max-w-24 rounded-xl border border-slate-300 bg-white px-2 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-teal-700 dark:border-slate-700 dark:bg-slate-900"

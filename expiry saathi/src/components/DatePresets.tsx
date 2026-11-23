@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { CalendarDays } from "lucide-react";
 import { Button } from "./Button";
-import { defaultMessages as hinglish } from "../i18n";
+import { defaultMessages as messages } from "../i18n";
 import { getPresetExpiryDate, type DatePreset } from "../features/add-item/date-presets";
 import { StatusBadge } from "./StatusBadge";
 import { getStatus } from "../domain/expiry";
@@ -23,9 +23,9 @@ export function DatePresets({ value, onChange, onBlur, inputRef, error }: DatePr
   return (
     <div>
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold">{hinglish.expiryDate}</legend>
+        <legend className="mb-2 text-sm font-semibold">{messages.expiryDate}</legend>
         <div className="grid grid-cols-3 gap-2">
-          {hinglish.datePresets.map(({ key, label }) => (
+          {messages.datePresets.map(({ key, label }) => (
             <Button
               aria-pressed={value === getPresetExpiryDate(key as DatePreset)}
               className="px-2 text-sm"
@@ -41,7 +41,7 @@ export function DatePresets({ value, onChange, onBlur, inputRef, error }: DatePr
       </fieldset>
 
       <label className="mt-4 block text-sm font-semibold" htmlFor="expiry-date">
-        {hinglish.chooseDate}
+        {messages.chooseDate}
       </label>
       <div className="mt-2 flex min-h-12 items-center gap-3 rounded-xl border border-slate-300 bg-white px-3 dark:border-slate-700 dark:bg-slate-900">
         <CalendarDays aria-hidden="true" className="shrink-0 text-teal-800 dark:text-teal-300" size={20} />
@@ -70,7 +70,7 @@ export function DatePresets({ value, onChange, onBlur, inputRef, error }: DatePr
           <StatusBadge result={expiryStatus} />
           {expiryStatus.daysLeft < 0 ? (
             <span className="text-sm font-medium text-rose-700 dark:text-rose-300">
-              {hinglish.expiredAlreadyWarning}
+              {messages.expiredAlreadyWarning}
             </span>
           ) : null}
         </div>

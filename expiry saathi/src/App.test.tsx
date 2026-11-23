@@ -4,14 +4,13 @@ import { describe, expect, it } from "vitest";
 import { App } from "./App";
 
 describe("app shell", () => {
-  it("renders the localized welcome and offline-first status", () => {
+  it("renders the dashboard home screen", async () => {
     render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole("heading", { name: "Aapka stock saathi taiyaar hai." })).toBeVisible();
-    expect(screen.getByText("Offline-first")).toBeVisible();
+    expect(await screen.findByRole("navigation", { name: "Main navigation" })).toBeVisible();
   });
 });
